@@ -30,4 +30,3 @@ def return_definition(search_term):
 #     # return {'word': word, "def": definition}
 #
 # print(return_random_word())
-print(return_definition("freedom"))
