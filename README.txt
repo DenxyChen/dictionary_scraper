@@ -2,18 +2,18 @@ README:
 
 ---- Activate the Virtual Environment ----
 
-To enter the virtual environment, navigate to the api directory and run the command:
+To enter the virtual environment, navigate to the *api* directory and run the command:
 
-.venv\Scripts\activate
+**venv\Scripts\activate**
 
 If you've correctly activated the virtual environment, the command line will start with (venv).
 
 
 ---- Start the Flask Backend ----
 
-To start the backend API, navigate to the api directory and run the command:
+To start the backend API, navigate to the *Scripts* directory and run the command:
 
-flask run
+**flask run**
 
 If successful, you should see:
 
@@ -30,13 +30,13 @@ Do **NOT** CTRL+C until you want to close the API.
 
 ---- Start the React Frontend ----
 
-To start the frontend, navigate to the frontend directory and run the command (once only):
+To start the frontend, navigate to the *frontend* directory and run the command (once only):
 
-npm install -g yarn
+**npm install -g yarn**
 
 Once the yarn command is installed, or if it is already installed, start the React App using the command:
 
-yarn start
+**yarn start**
 
 If successful, you should see:
 
