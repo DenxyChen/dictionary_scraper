@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
@@ -8,24 +7,28 @@ import HomePage from './pages/HomePage';
 import Navigation from './components/Navigation'
 
 function App() {
-  const [randomWord, setRandomWord] = useState("");
-
-  useEffect(() => {
-    fetch('/English').then(res => res.json()).then(data => {
-      setRandomWord(data.word);
-    });
-  }, []);
-
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          This following word is randomly selected: {randomWord}
-        </p>
-      </header>
+        <Router>
+          
+          {/* Global design features are displayed across the entire site. */}
+          <header className="App-header">
+            <h1>Random Word Generator</h1>
+          </header>
+          
+          <Navigation />
+
+          {/* Routing from Exploration — Routing & Forms */}
+          <main>
+            <Route path="/" exact><HomePage /></Route>
+          </main>
+          
+          <footer>
+              © 2022 Xiao Yu Chen, modified 2/14/2022
+          </footer>
+        
+        </Router>
     </div>
-    
   );
 }
 

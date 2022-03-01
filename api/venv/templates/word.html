@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <article>
+    <div id="ran-word">
+      <h2>{{ data.word }}</h2>
+      <h3>{{ data.type}}</h3>
+    </div>
+    <div id="definition">
+        <ol>
+        {% for i in data.definition %}
+            <li>{{ i }}</li>
+        {% endfor %}
+        </ol>
+    </div>
+    <div id="action-buttons">
+      <button>Copy to clipboard</button>
+      <button>Generate new word</button><br></br>
+    </div>
+    <div>
+      <table>
+          <tr>
+            <th>User Reviews</th>
+          </tr>
+        {% for review in all_reviews %}
+            <tr>
+                <td>{{review.review}}</td>
+            </tr>
+        {% endfor %}
+        </table>
+    </div>
+    <iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
+
+    <form method="POST" action="http://localhost:3000/add_review" target="dummyframe">
+        <input type="hidden" value={{data.word}} placeholder="Confirm word" name="word">
+        <input type="text" placeholder="Add a comment" name="review">
+        <button type="submit">Submit comment</button>
+    </form>
+  </article>
+{% endblock content %}

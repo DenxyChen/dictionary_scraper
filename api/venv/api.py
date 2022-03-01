@@ -1,4 +1,4 @@
-from flask import Flask, json, redirect, url_for
+from flask import Flask, json, redirect, url_for, render_template, request
 import requests
 import random
 
@@ -67,12 +67,15 @@ def get_english_word():
     return redirect(url_for("return_english_word", word=word))
 
 
-@app.route('/English/<string:word>')
+@app.route('/English/<string:word>', methods=['GET', 'POST'])
 def return_english_word(word):
-    data = get_data_from_api("english", word)
+    data = parse_data(get_data_from_api("english", word), word)
+    reviews_url = 'http://localhost:3000/get_reviews/' + word
+    reviews_json = requests.get(reviews_url)
+    all_reviews = json.loads(reviews_json.text)["all_reviews"]
 
     # parse JSON for the definition, type, and path to the sound file
-    return parse_data(data, word)
+    return render_template('word.html', data=data, all_reviews=all_reviews)
 
 
 @app.route('/Spanish')
