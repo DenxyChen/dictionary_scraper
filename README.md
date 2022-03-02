@@ -13,10 +13,11 @@ If you've correctly activated the virtual environment, the command line will sta
 
 To start the backend API, navigate to the *Scripts* directory and run the command:
 
-``` **flask run** ```
+``` flask run ```
 
 If successful, you should see:
 
+ ``` 
  * Serving Flask app 'api.py' (lazy loading)
  * Environment: development
  * Debug mode: on
@@ -24,6 +25,7 @@ If successful, you should see:
  * Debugger is active!
  * Debugger PIN: 542-534-549
  * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+ ```
 
 Do **NOT** CTRL+C until you want to close the API.
 
@@ -32,17 +34,19 @@ Do **NOT** CTRL+C until you want to close the API.
 
 To start the frontend, navigate to the *frontend* directory and run the command (once only):
 
-**npm install -g yarn**
+```npm install -g yarn ```
 
 Once the yarn command is installed, or if it is already installed, start the React App using the command:
 
-**yarn start**
+``` yarn start ```
 
 If successful, you should see:
 
+```
 Starting the development server...
 Compiled successfully!
 
 You can now view frontend in the browser.
 
   Local:            http://localhost:3000
+  ```
