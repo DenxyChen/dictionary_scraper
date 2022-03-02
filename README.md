@@ -13,7 +13,7 @@ If you've correctly activated the virtual environment, the command line will sta
 
 To start the backend API, navigate to the *Scripts* directory and run the command:
 
-.. **flask run**
+``` **flask run** ```
 
 If successful, you should see:
 
