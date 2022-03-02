@@ -1,6 +1,6 @@
 README:
 
----- Activate the Virtual Environment ----
+## Activate the Virtual Environment 
 
 To enter the virtual environment, navigate to the *api* directory and run the command:
 
@@ -9,11 +9,11 @@ To enter the virtual environment, navigate to the *api* directory and run the co
 If you've correctly activated the virtual environment, the command line will start with (venv).
 
 
----- Start the Flask Backend ----
+## Start the Flask Backend 
 
 To start the backend API, navigate to the *Scripts* directory and run the command:
 
-**flask run**
+.. **flask run**
 
 If successful, you should see:
 
@@ -28,7 +28,7 @@ If successful, you should see:
 Do **NOT** CTRL+C until you want to close the API.
 
 
----- Start the React Frontend ----
+## Start the React Frontend 
 
 To start the frontend, navigate to the *frontend* directory and run the command (once only):
 
