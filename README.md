@@ -1,5 +1,3 @@
-README:
-
 ## Activate the Virtual Environment 
 
 To enter the virtual environment, navigate to the *api* directory and run the command:
@@ -49,4 +47,4 @@ Compiled successfully!
 You can now view frontend in the browser.
 
   Local:            http://localhost:3000
-  ```
+```
