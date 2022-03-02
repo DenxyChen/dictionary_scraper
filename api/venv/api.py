@@ -3,10 +3,11 @@ import requests
 import random
 
 app = Flask(__name__)
+app.config.from_pyfile("config.py")
+app.url_map.strict_slashes = False
 
-ENGLISH_KEY = "?key=d2abfab6-ba61-44cd-9d96-48c99eaa363a"
-SPANISH_KEY = "?key=87d0bcf4-421f-4845-9543-d96eda5ff20a"
-
+ENGLISH_API_KEY = "?key=" + app.config.get("ENGLISH_API_KEY")
+SPANISH_API_KEY = "?key=" + app.config.get("SPANISH_API_KEY")
 
 # ---------- HELPER METHODS -----------
 def get_master(language):
@@ -19,13 +20,12 @@ def get_master(language):
     dictionary = json.loads(dictionary_json.text)
     return dictionary
 
-
 def get_data_from_api(language, word):
     """Calls the Merriam-Webster endpoint to return a JSON document with info for a given word."""
     if language == "english":
-        api_url = "https://www.dictionaryapi.com/api/v3/references/collegiate/json/" + word + ENGLISH_KEY
+        api_url = "https://www.dictionaryapi.com/api/v3/references/collegiate/json/" + word + ENGLISH_API_KEY
     elif language == "spanish":
-        api_url = "https://www.dictionaryapi.com/api/v3/references/spanish/json/" + word + SPANISH_KEY
+        api_url = "https://www.dictionaryapi.com/api/v3/references/spanish/json/" + word + SPANISH_API_KEY
     api_json = requests.get(api_url)
     data = json.loads(api_json.text)
     return data
@@ -50,7 +50,7 @@ def return_definition(search_term):
 
 
 # ---------- MERRIAM-WEBSTER API ----------
-@app.route('/English')
+@app.route('/english')
 def get_english_word():
     # choice() returns a random key:value pair as a tuple where the key is the word
     master = get_master("english")
@@ -67,10 +67,10 @@ def get_english_word():
     return redirect(url_for("return_english_word", word=word))
 
 
-@app.route('/English/<string:word>', methods=['GET', 'POST'])
+@app.route('/english/<string:word>', methods=['GET', 'POST'])
 def return_english_word(word):
     data = parse_data(get_data_from_api("english", word), word)
-    reviews_url = 'http://localhost:3000/get_reviews/' + word
+    reviews_url = 'http://localhost:8000/get_reviews/' + word
     reviews_json = requests.get(reviews_url)
     all_reviews = json.loads(reviews_json.text)["all_reviews"]
 
@@ -78,7 +78,7 @@ def return_english_word(word):
     return render_template('word.html', data=data, all_reviews=all_reviews)
 
 
-@app.route('/Spanish')
+@app.route('/spanish')
 def get_spanish_word():
     # choice() returns a random key:value pair as a tuple where the key is the word
     master = get_master("spanish")
@@ -92,12 +92,11 @@ def get_spanish_word():
         return get_spanish_word()
 
     # create a dynamic URL and redirect
-    return redirect(url_for("return_spanish_word", word=word))
-
-
-@app.route('/spanish/<string:word>')
-def return_spanish_word(word):
-    data = get_data_from_api("spanish", word)
-
-    # parse JSON for the definition, type, and path to the sound file
     return parse_data(data, word)
+
+# @app.route('/spanish/<string:word>')
+# def return_spanish_word(word):
+#     data = get_data_from_api("spanish", word)
+#
+#     # parse JSON for the definition, type, and path to the sound file
+#     return parse_data(data, word)

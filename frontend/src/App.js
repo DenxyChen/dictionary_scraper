@@ -7,27 +7,30 @@ import HomePage from './pages/HomePage';
 import Navigation from './components/Navigation'
 
 function App() {
+  const [aWord, setWord] = useState("");
+  const [definitions, setDefinitions] = useState([]);
+  const [type, setType] = useState("");
+
+  useEffect(() => {
+    fetch('/spanish').then(res => res.json()).then(data => {
+      setWord(data.word);
+      setDefinitions(data.definitions);
+      setType(data.type);
+    });
+  }, [])
+
   return (
-    <div className="App">
-        <Router>
-          
+    <div className="App">  
           {/* Global design features are displayed across the entire site. */}
           <header className="App-header">
             <h1>Random Word Generator</h1>
+            <p>The word is {aWord}. It is a(n) {type}.</p>
           </header>
           
-          <Navigation />
-
-          {/* Routing from Exploration — Routing & Forms */}
-          <main>
-            <Route path="/" exact><HomePage /></Route>
-          </main>
-          
           <footer>
-              © 2022 Xiao Yu Chen, modified 2/14/2022
+              © 2022 github.com/DenxyChen
           </footer>
         
-        </Router>
     </div>
   );
 }
