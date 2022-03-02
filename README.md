@@ -2,7 +2,7 @@
 
 To enter the virtual environment, navigate to the *api* directory and run the command:
 
-**venv\Scripts\activate**
+``` venv\Scripts\activate ```
 
 If you've correctly activated the virtual environment, the command line will start with (venv).
 
