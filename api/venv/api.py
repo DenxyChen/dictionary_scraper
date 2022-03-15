@@ -1,4 +1,4 @@
-from flask import Flask, json, redirect, url_for, render_template, request
+from flask import Flask, json, Response
 import requests
 import random
 import os
@@ -64,6 +64,11 @@ def get_data_from_api(language, word):
     return data
 
 
+# def get_reviews(word):
+#     reviews_url = 'http://localhost:8000/get_reviews/' + word
+#     reviews_json = requests.get(reviews_url)
+#     all_reviews = json.loads(reviews_json.text)["all_reviews"]
+
 def parse_data(data, word):
     """Parses the Merriam-Webster data for the definitions and type."""
     definitions = data[0]["shortdef"]
@@ -74,7 +79,7 @@ def parse_data(data, word):
 # ---------- SCRAPER ENDPOINT FOR TEAMMATE ----------
 @app.route('/dict_api/<string:search_term>')
 def return_definition(search_term):
-    """"This API's endpoint which returns the definition of a word if it is found in the master list."""
+    """"This API's endpoint which returns the definition of a word if it is found in the master dictionary."""
     master = get_master("english")
     if search_term.upper() in master:
         return {"word": search_term, "definition": master[search_term.upper()]}
@@ -84,54 +89,61 @@ def return_definition(search_term):
 
 # ---------- MERRIAM-WEBSTER API ----------
 @app.route('/english')
-def send_english_word():
-    # choice() returns a random key:value pair as a tuple where the key is the word
-
-    def get_random_english_word(master):
-        word = random.choice(list(master.items()))[0].lower()
+def send_english_word_data():
+    def select_random_english_word(word_dict):
+        # choice() returns a random key:value pair as a tuple where the key is the word
+        word = random.choice(list(word_dict.items()))[0].lower()
 
         # call the Merriam-Webster English Collegiate endpoint
-        data = get_data_from_api("english", word)
+        dict_data = get_data_from_api("english", word)
 
         # filter out words not found in Merriam-Webster using recursion
-        if not isinstance(data[0], dict):
-            return get_random_english_word(master)
+        if not isinstance(dict_data[0], dict):
+            return select_random_english_word(word_dict)
 
-        # create a dynamic URL and redirect
-        # return redirect(url_for("return_english_word", word=word))
-        return parse_data(get_data_from_api("english", word), word)
+        return parse_data(dict_data, word)
 
     master = get_master("english")
-    return get_random_english_word(master)
-
-
-@app.route('/english/<string:word>', methods=['GET', 'POST'])
-def return_english_word(word):
-    data = parse_data(get_data_from_api("english", word), word)
-    reviews_url = 'http://localhost:8000/get_reviews/' + word
-    reviews_json = requests.get(reviews_url)
-    all_reviews = json.loads(reviews_json.text)["all_reviews"]
-
-    # parse JSON for the definition, type, and path to the sound file
-    return render_template('word.html', data=data, all_reviews=all_reviews)
+    try:
+        data = select_random_english_word(master)
+    except RecursionError:
+        return Response("", status=500)
+    return Response(data, status=201, mimetype='application/json')
 
 
 @app.route('/spanish')
-def get_spanish_word():
-    # choice() returns a random key:value pair as a tuple where the key is the word
+def send_spanish_word_data():
+    def select_random_spanish_word(word_list):
+        # choice() returns a random key:value pair as a tuple where the key is the word
+        word = random.choice(word_list).lower()
+
+        # call the Merriam-Webster Spanish-English endpoint
+        dict_data = get_data_from_api("spanish", word)
+
+        # filter out words not found in Merriam-Webster using recursion
+        if not isinstance(dict_data[0], dict):
+            return select_random_spanish_word(word_list)
+
+        # create a dynamic URL and redirect
+        return parse_data(dict_data, word)
+
     master = get_master("spanish")
-    word = random.choice(master).lower()
+    try:
+        data = select_random_spanish_word(master)
+    except RecursionError:
+        return Response("", status=500)
+    return Response(data, status=201, mimetype='application/json')
 
-    # call the Merriam-Webster Spanish-English endpoint
-    data = get_data_from_api("spanish", word)
 
-    # filter out words not found in Merriam-Webster using recursion
-    if not isinstance(data[0], dict):
-        return get_spanish_word()
+# @app.route('/english/<string:word>', methods=['GET', 'POST'])
+# def return_english_word(word):
+#     data = parse_data(get_data_from_api("english", word), word)
 
-    # create a dynamic URL and redirect
-    return parse_data(data, word)
-
+#     reviews_url = 'http://localhost:8000/get_reviews/' + word
+#     reviews_json = requests.get(reviews_url)
+#     all_reviews = json.loads(reviews_json.text)["all_reviews"]
+#     # parse JSON for the definition, type, and path to the sound file
+#     return render_template('word.html', data=data, all_reviews=all_reviews)
 
 # @app.route('/spanish/<string:word>')
 # def return_spanish_word(word):
@@ -140,4 +152,3 @@ def get_spanish_word():
 #     # parse JSON for the definition, type, and path to the sound file
 #     return parse_data(data, word)
 
-print(send_english_word())
