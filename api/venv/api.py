@@ -1,24 +1,54 @@
 from flask import Flask, json, redirect, url_for, render_template, request
 import requests
 import random
+import os
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 app.config.from_pyfile("config.py")
 app.url_map.strict_slashes = False
 
 ENGLISH_API_KEY = "?key=" + app.config.get("ENGLISH_API_KEY")
+ENGLISH_MASTER_PATH = '.\data\english_master.json'
+ENGLISH_MASTER_URL = 'https://raw.githubusercontent.com/adambom/dictionary/master/dictionary.json'
+
 SPANISH_API_KEY = "?key=" + app.config.get("SPANISH_API_KEY")
+SPANISH_MASTER_PATH = '.\data\spanish_master.json'
+SPANISH_MASTER_URL = 'https://raw.githubusercontent.com/words/an-array-of-spanish-words/master/index.json'
+
 
 # ---------- HELPER METHODS -----------
 def get_master(language):
     """Returns a collection of words from the given language by making a GET request to an online JSON document."""
-    if language == "english":
-        dictionary_json_url = 'https://raw.githubusercontent.com/adambom/dictionary/master/dictionary.json'
-    elif language == "spanish":
-        dictionary_json_url = 'https://raw.githubusercontent.com/words/an-array-of-spanish-words/master/index.json'
-    dictionary_json = requests.get(dictionary_json_url)
-    dictionary = json.loads(dictionary_json.text)
-    return dictionary
+
+    def update_local_file(dictionary_json_url, path):
+        dictionary_json = requests.get(dictionary_json_url)
+        master = json.loads(dictionary_json.text)
+
+        with open(path, "w+") as to_file:
+            json.dump(master, to_file)
+
+        return master
+
+    def time_since_last_modified(path):
+        last_modified_time = datetime.fromtimestamp(os.stat(path).st_mtime)
+        now = datetime.today()
+
+        return (now - last_modified_time).seconds
+
+    language_dict = {"english": {"rel_path": ENGLISH_MASTER_PATH, "url": ENGLISH_MASTER_URL},
+                     "spanish": {"rel_path": SPANISH_MASTER_PATH, "url": SPANISH_MASTER_URL}}
+
+    rel_path = language_dict[language]["rel_path"]
+    url = language_dict[language]["url"]
+    abs_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), rel_path)
+
+    if time_since_last_modified(abs_path) > 120:
+        return update_local_file(url, abs_path)
+
+    with open(abs_path, 'r') as from_file:
+        return json.load(from_file)
+
 
 def get_data_from_api(language, word):
     """Calls the Merriam-Webster endpoint to return a JSON document with info for a given word."""
@@ -64,7 +94,8 @@ def get_english_word():
         return get_english_word()
 
     # create a dynamic URL and redirect
-    return redirect(url_for("return_english_word", word=word))
+    # return redirect(url_for("return_english_word", word=word))
+    return parse_data(get_data_from_api("english", word), word)
 
 
 @app.route('/english/<string:word>', methods=['GET', 'POST'])
@@ -94,9 +125,12 @@ def get_spanish_word():
     # create a dynamic URL and redirect
     return parse_data(data, word)
 
+
 # @app.route('/spanish/<string:word>')
 # def return_spanish_word(word):
 #     data = get_data_from_api("spanish", word)
 #
 #     # parse JSON for the definition, type, and path to the sound file
 #     return parse_data(data, word)
+
+print(get_english_word())

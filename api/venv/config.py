@@ -1,4 +1,7 @@
-from os import environ 
+import os
+from dotenv import load_dotenv
 
-ENGLISH_API_KEY = environ.get('ENGLISH_API_KEY')
-SPANISH_API_KEY = environ.get('SPANISH_API_KEY')
+load_dotenv()
+
+ENGLISH_API_KEY = os.getenv("ENGLISH_API_KEY")
+SPANISH_API_KEY = os.getenv("SPANISH_API_KEY")
