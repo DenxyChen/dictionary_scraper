@@ -12,7 +12,7 @@ function App() {
   const [type, setType] = useState("");
 
   useEffect(() => {
-    fetch('/spanish').then(res => res.json()).then(data => {
+    fetch('/english').then(res => res.json()).then(data => {
       setWord(data.word);
       setDefinitions(data.definitions);
       setType(data.type);

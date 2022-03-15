@@ -1,4 +1,4 @@
-from flask import Flask, json, Response
+from flask import Flask, json, Response, jsonify
 import requests
 import random
 import os
@@ -108,7 +108,7 @@ def send_english_word_data():
         data = select_random_english_word(master)
     except RecursionError:
         return Response("", status=500)
-    return Response(data, status=201, mimetype='application/json')
+    return Response(response=json.dumps(data), status=201, mimetype='application/json')
 
 
 @app.route('/spanish')
@@ -132,7 +132,7 @@ def send_spanish_word_data():
         data = select_random_spanish_word(master)
     except RecursionError:
         return Response("", status=500)
-    return Response(data, status=201, mimetype='application/json')
+    return Response(response=json.dumps(data), status=201, mimetype='application/json')
 
 
 # @app.route('/english/<string:word>', methods=['GET', 'POST'])
