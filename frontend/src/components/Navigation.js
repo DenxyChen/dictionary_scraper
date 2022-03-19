@@ -1,12 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-function Navigation( ) {
+export default function Navigation( ) {
     return (
         <nav class="nav-bar">
-            <Link to="/" className="link"> Landing Page</Link>
+            <Link to="/" className="link">Select Language</Link>
         </nav>
     );
 }
-
-export default Navigation;

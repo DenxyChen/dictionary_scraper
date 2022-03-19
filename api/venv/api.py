@@ -1,8 +1,8 @@
-from flask import Flask, json, Response, jsonify
+from flask import Flask, json, Response
 import requests
 import random
 import os
-from datetime import datetime, timedelta
+from datetime import datetime
 
 app = Flask(__name__)
 app.config.from_pyfile("config.py")
@@ -63,11 +63,12 @@ def get_data_from_api(language, word):
     data = json.loads(api_json.text)
     return data
 
+def get_reviews(word):
+    reviews_url = 'http://localhost:8000/get_reviews/' + word
+    reviews_json = requests.get(reviews_url)
+    all_reviews = json.loads(reviews_json.text)["all_reviews"]
+    return all_reviews
 
-# def get_reviews(word):
-#     reviews_url = 'http://localhost:8000/get_reviews/' + word
-#     reviews_json = requests.get(reviews_url)
-#     all_reviews = json.loads(reviews_json.text)["all_reviews"]
 
 def parse_data(data, word):
     """Parses the Merriam-Webster data for the definitions and type."""
@@ -76,10 +77,10 @@ def parse_data(data, word):
     return {"word": word, "definition": definitions, "type": type_of_speech}
 
 
-# ---------- SCRAPER ENDPOINT FOR TEAMMATE ----------
+# ==================== MICROSERVICE ENDPOINT FOR TEAMMATE ====================
 @app.route('/dict_api/<string:search_term>')
 def return_definition(search_term):
-    """"This API's endpoint which returns the definition of a word if it is found in the master dictionary."""
+    """"This program's endpoint which returns the definition of a word if it is found in the master dictionary."""
     master = get_master("english")
     if search_term.upper() in master:
         return {"word": search_term, "definition": master[search_term.upper()]}
@@ -87,10 +88,19 @@ def return_definition(search_term):
         return {"word": search_term, "definition": "Not found"}
 
 
-# ---------- MERRIAM-WEBSTER API ----------
+# ==================== MERRIAM-WEBSTER API ROUTES ====================
 @app.route('/english')
 def send_english_word_data():
+    """
+    Sends a Response containing a JSON with a randomly selected English word's definition and figure of speech.
+    Additionally includes the URL to an external audio recording of the word's pronunciation.
+    """
     def select_random_english_word(word_dict):
+        """
+        Randomly selects a word and calls the Merriam-Webster API to get the required data. API calls for words that
+        have the required data return a JSON that contains a Python dictionary at index 0. All other words are removed
+        from the master and a recusrive call to this function is made to select a new word.
+        """
         # choice() returns a random key:value pair as a tuple where the key is the word
         word = random.choice(list(word_dict.items()))[0].lower()
 
@@ -107,8 +117,8 @@ def send_english_word_data():
     try:
         data = select_random_english_word(master)
     except RecursionError:
-        return Response("", status=500)
-    return Response(response=json.dumps(data), status=201, mimetype='application/json')
+        return Response(status=500)
+    return Response(response=json.dumps(data), status=200, mimetype='application/json')
 
 
 @app.route('/spanish')
@@ -131,10 +141,11 @@ def send_spanish_word_data():
     try:
         data = select_random_spanish_word(master)
     except RecursionError:
-        return Response("", status=500)
-    return Response(response=json.dumps(data), status=201, mimetype='application/json')
+        return Response(status=500)
+    return Response(response=json.dumps(data), status=200, mimetype='application/json')
 
 
+# ==================== JINJA2 TEMPLATING AND URL_FOR REDIRECT ====================
 # @app.route('/english/<string:word>', methods=['GET', 'POST'])
 # def return_english_word(word):
 #     data = parse_data(get_data_from_api("english", word), word)

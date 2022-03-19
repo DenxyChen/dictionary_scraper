@@ -1,38 +1,41 @@
+// style sheet
 import './App.css';
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
 
+// dependencies
+import { useState, React} from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
+// pages
 import HomePage from './pages/HomePage';
 
-import Navigation from './components/Navigation'
+// components
+import Navigation from './components/Navigation';
+import logo from "./images/MWLogo_DarkBG_120x120_2x.png";
 
-function App() {
-  const [aWord, setWord] = useState("");
-  const [definitions, setDefinitions] = useState([]);
-  const [type, setType] = useState("");
-
-  useEffect(() => {
-    fetch('/english').then(res => res.json()).then(data => {
-      setWord(data.word);
-      setDefinitions(data.definitions);
-      setType(data.type);
-    });
-  }, [])
-
+export default function App() {
   return (
-    <div className="App">  
-          {/* Global design features are displayed across the entire site. */}
-          <header className="App-header">
-            <h1>Random Word Generator</h1>
-            <p>The word is {aWord}. It is a(n) {type}.</p>
-          </header>
-          
-          <footer>
-              © 2022 github.com/DenxyChen
-          </footer>
-        
+    <div className="App">
+      <BrowserRouter>
+
+        {/* Global design features are displayed across the entire site. */}
+        <header className="App-header">
+          <img src={logo} alt="Merriam-Webster Logo"/>
+          <h1>Word Randomizer</h1>
+        </header>
+
+        <Navigation />
+
+        <main>
+          <Routes>
+            <Route path="/" exact element={<HomePage />} />
+          </Routes>
+        </main>
+
+        <footer>
+              © 2022 Xiao Yu Chen, modified 03/18/2022
+        </footer>
+
+    </BrowserRouter>
     </div>
   );
 }
-
-export default App;
