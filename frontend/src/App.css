@@ -122,6 +122,7 @@ th {
 tr:nth-child(even){
   background-color: #f2f2f2;
   border: 1px solid #ddd;
+  width: 100%;
 }
 
 tr:nth-child(odd){
@@ -225,6 +226,13 @@ button {
 }
 
 #go {
-  margin-left: 45%;
+  margin-left: 38%;
   padding: auto;
+}
+
+iframe {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border: 0;
 }

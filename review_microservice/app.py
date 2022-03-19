@@ -59,13 +59,12 @@ class PostForm(Form):
 @app.route('/add_review', methods=['GET', 'POST'])
 def add_review():
     form = PostForm(request.form)
+    print(request.form)
     if request.method == "POST":
         post = reviews(num=request.form["word"], review=request.form["review"])
         db.session.add(post)
         db.session.commit()
         flash('Your review has been added ', 'success')
-        return redirect(url_for('courses_page'))
-    return render_template('add_review.html', form=form)
 
 @app.route('/get_reviews/<string:id>')
 def get_reviews(id):

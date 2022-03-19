@@ -63,16 +63,24 @@ def get_data_from_api(language, word):
     data = json.loads(api_json.text)
     return data
 
+@app.route('/reviews/<string:word>')
 def get_reviews(word):
     reviews_url = 'http://localhost:8000/get_reviews/' + word
     reviews_json = requests.get(reviews_url)
+    print(reviews_json)
     all_reviews = json.loads(reviews_json.text)["all_reviews"]
-    return all_reviews
+    review_list = []
+    for each_review in all_reviews:
+        review_list.append(each_review["review"])
+    print(review_list)
+    review_dict = {"all_reviews": review_list}
+    return Response(response=json.dumps(review_dict), status=200, mimetype='application/json')
 
 
 def parse_data(data, word):
     """Parses the Merriam-Webster data for the definitions and type."""
     definitions = data[0]["shortdef"]
+    print(definitions)
     type_of_speech = data[0]["fl"]
     return {"word": word, "definition": definitions, "type": type_of_speech}
 
@@ -162,4 +170,3 @@ def send_spanish_word_data():
 #
 #     # parse JSON for the definition, type, and path to the sound file
 #     return parse_data(data, word)
-
