@@ -31,7 +31,7 @@
     </div>
     <iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
 
-    <form method="POST" action="http://localhost:8000/add_review" target="dummyframe">
+    <form onSubmit=method="POST" action="http://localhost:8000/add_review" target="dummyframe">
         <input type="hidden" value={{data.word}} placeholder="Confirm word" name="word">
         <input type="text" placeholder="Add a comment" name="review">
         <button type="submit">Submit comment</button>
