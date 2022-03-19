@@ -61,10 +61,12 @@ export default function HomePage( ) {
       </div>
       <button id="go" onClick={() => getWordData(language)}>GO</button>
       <CopyButton word={word}/>
+
       <div id="ran-word">
           <h2>{word}</h2>
           <h3>{type}</h3>
       </div>
+
       <div id="definition">
           <h4>Definition of {word}</h4>
           <DefinitionList definitionArray={definition} />
@@ -72,12 +74,14 @@ export default function HomePage( ) {
       </div>
 
       <CommentTable reviewsArray={reviews} />
+
       <iframe id="iframe" name="my_iframe"></iframe>
       <form method="POST" action="http://localhost:8000/add_review" target="my_iframe">
         <input type="hidden" value={word} placeholder="Confirm word" name="word"/>
         <input type="text" placeholder="Add a comment" name="review"/>
         <button type="submit" onClick={() => loadReviews()}>Submit comment</button>
       </form>
+      
     </article>
   );
 }
